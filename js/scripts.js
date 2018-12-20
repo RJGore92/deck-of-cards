@@ -1,8 +1,9 @@
 var deck = [];
 var preShuffledDeck = [];
 var postShuffledDeck = [];
-
-
+var dealingDeck = [];
+var dealtDeck = [];
+var dealtCardsCounter = 0;
 
 
 function getRandomInt(max) {
@@ -31,12 +32,59 @@ $(document).ready(function() {
     console.log(splitCard);
     splitSuit = splitCard[2];
     console.log(splitSuit);
-    $(`ul#deck-output`).append(
-      "<li class='"+ splitSuit + "'>" + preShuffledDeck[targetSlot] + "</li>"
-    );
+    if (i > 39) {
+      $("ul#deck-output-a").append(
+        "<li class='"+ splitSuit + "'>" + preShuffledDeck[targetSlot] + "</li>"
+      );
+    }
+    else if (i > 26) {
+      $("ul#deck-output-b").append(
+        "<li class='"+ splitSuit + "'>" + preShuffledDeck[targetSlot] + "</li>"
+      );
+    }
+    else if (i > 13) {
+      $("ul#deck-output-c").append(
+        "<li class='"+ splitSuit + "'>" + preShuffledDeck[targetSlot] + "</li>"
+      );
+    }
+    else {
+      $("ul#deck-output-d").append(
+        "<li class='"+ splitSuit + "'>" + preShuffledDeck[targetSlot] + "</li>"
+      );
+    }
     postShuffledDeck.push(preShuffledDeck[targetSlot]);
 
     preShuffledDeck.splice(targetSlot, 1);
 
   }
+  dealingDeck = postShuffledDeck;
+  $("button#dealing-button").click(function(){
+    dealtCardsCounter += 1;
+    var cardToDeal = dealingDeck[0];
+    dealtDeck.push(cardToDeal);
+    var cardDealtSplit = cardToDeal.split(" ");
+    var findSuit = cardDealtSplit[2];
+    $("ul#dealt-cards").append("<li class='" + findSuit + "'>" + cardToDeal + "</li>");
+    dealingDeck.splice(0, 1);
+    if (dealtCardsCounter == 52) {
+      $("div#can-deal-button").hide();
+      $("div#reshuffle-button").show();
+    }
+  });
+
+  $("button#reshuffle").click(function(){
+    dealtCardsCounter = 0;
+    $("ul#dealt-cards").empty();
+    for (var i = 52; i > 0; i--) {
+      var targetSlot = getRandomInt(i);
+      var targetCard = dealtDeck[targetSlot];
+      var splitCard = targetCard.split(" ");
+      dealingDeck.push(dealtDeck[targetSlot]);
+
+      dealtDeck.splice(targetSlot, 1);
+      $("div#can-deal-button").show();
+      $("div#reshuffle-button").hide();
+    }
+  });
+
 });

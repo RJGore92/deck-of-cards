@@ -1,3 +1,7 @@
 .hearts, .diamonds {
   color: red;
 }
+
+#reshuffle-button {
+  display: none;
+}
