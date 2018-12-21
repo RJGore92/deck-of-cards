@@ -1,9 +1,35 @@
-var deck = [];
+// var deck = [];
 var preShuffledDeck = [];
-var postShuffledDeck = [];
+// var postShuffledDeck = [];
 var dealingDeck = [];
 var dealtDeck = [];
 var dealtCardsCounter = 0;
+
+function shuffleDeck(deckA){
+  var deckB = [];
+  for (var i = 52; i > 0; i--) {
+    var targetSlot = getRandomInt(i);
+    var targetCard = deckA[targetSlot];
+    deckB.push(deckA[targetSlot]);
+
+    deckA.splice(targetSlot, 1);
+  }
+  return deckB;
+}
+
+function dealCard(dealDeck){
+  dealtCardsCounter += 1;
+  var cardToDeal = dealingDeck[0];
+  dealtDeck.push(cardToDeal);
+  var cardDealtSplit = cardToDeal.split(" ");
+  var findSuit = cardDealtSplit[2];
+  $("ul#dealt-cards").append("<li class='" + findSuit + "'>" + cardToDeal + "</li>");
+  dealingDeck.splice(0, 1);
+  if (dealtCardsCounter == 52) {
+    $("div#can-deal-button").hide();
+    $("div#reshuffle-button").show();
+  }
+}
 
 
 function getRandomInt(max) {
@@ -21,10 +47,10 @@ $(document).ready(function() {
        $(`ul#${suit}`).append(
          `<li class='${suit}'>${card} of ${suit}</li>`
        );
-       deck.push(`${card} of ${suit}`);
+       preShuffledDeck.push(`${card} of ${suit}`);
     });
   });
-  preShuffledDeck = deck;
+  // preShuffledDeck = deck;
   for (var i = 52; i > 0; i--) {
     var targetSlot = getRandomInt(i);
     var targetCard = preShuffledDeck[targetSlot];
@@ -52,39 +78,22 @@ $(document).ready(function() {
         "<li class='"+ splitSuit + "'>" + preShuffledDeck[targetSlot] + "</li>"
       );
     }
-    postShuffledDeck.push(preShuffledDeck[targetSlot]);
+    dealingDeck.push(preShuffledDeck[targetSlot]);
 
     preShuffledDeck.splice(targetSlot, 1);
 
   }
-  dealingDeck = postShuffledDeck;
+  // dealingDeck = postShuffledDeck;
   $("button#dealing-button").click(function(){
-    dealtCardsCounter += 1;
-    var cardToDeal = dealingDeck[0];
-    dealtDeck.push(cardToDeal);
-    var cardDealtSplit = cardToDeal.split(" ");
-    var findSuit = cardDealtSplit[2];
-    $("ul#dealt-cards").append("<li class='" + findSuit + "'>" + cardToDeal + "</li>");
-    dealingDeck.splice(0, 1);
-    if (dealtCardsCounter == 52) {
-      $("div#can-deal-button").hide();
-      $("div#reshuffle-button").show();
-    }
+    dealCard(dealingDeck);
   });
 
   $("button#reshuffle").click(function(){
     dealtCardsCounter = 0;
     $("ul#dealt-cards").empty();
-    for (var i = 52; i > 0; i--) {
-      var targetSlot = getRandomInt(i);
-      var targetCard = dealtDeck[targetSlot];
-      var splitCard = targetCard.split(" ");
-      dealingDeck.push(dealtDeck[targetSlot]);
-
-      dealtDeck.splice(targetSlot, 1);
-      $("div#can-deal-button").show();
-      $("div#reshuffle-button").hide();
-    }
+    dealingDeck = shuffleDeck(dealtDeck);
+    $("div#can-deal-button").show();
+    $("div#reshuffle-button").hide();
   });
 
 });
